@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Skyhop Sparkle</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap');
+
+        * { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0;
+            font-family: "Lexend", sans-serif; 
+        }
+
+        body { 
+            width: 100%; 
+            height: 100vh; 
+            overflow: hidden; 
+            background-image: url('https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/ef2a7e58-f7a6-4a4b-bb83-bab1b8722ed5/d7fj17w-70fc0a15-cfd8-4339-81cd-02eabb6c3621.jpg/v1/fill/w_1024,h_576,q_75,strp/mlp_sky_background_by_wavecipher_d7fj17w-fullview.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9NTc2IiwicGF0aCI6Ii9mL2VmMmE3ZTU4LWY3YTYtNGE0Yi1iYjgzLWJhYjFiODcyMmVkNS9kN2ZqMTd3LTcwZmMwYTE1LWNmZDgtNDMzOS04MWNkLTAyZWFiYjZjMzYyMS5qcGciLCJ3aWR0aCI6Ijw9MTAyNCJ9XV0sImF1ZCI6WyJ1cm46c2VydmljZTppbWFnZS5vcGVyYXRpb25zIl19.H4f2eMNy0N7SDOvaynZQ-9koQnaWfLh2uNfxfNyZmow');
+            background-size: cover;
+            background-position: center 0px;
+            background-repeat: repeat-y; 
+        }
+
+        #gameArea {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        #player {
+            position: absolute;
+            width: 100px;
+            height: 120px;
+            background-image: url('https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/dcb3f1a2-7821-444b-8ca8-91b482d4935d/dhm92qc-98ee6cd2-c3d2-431f-bb9e-e368d8ded5c9.png/v1/fit/w_828,h_1072/twilight_sparkle_png_by_babyshowfan2002_dhm92qc-414w-2x.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9MTY1NyIsInBhdGgiOiIvZi9kY2IzZjFhMi03ODIxLTQ0NGItOGNhOC05MWI0ODJkNDkzNWQvZGhtOTJxYy05OGVlNmNkMi1jM2QyLTQzMWYtYmI5ZS1lMzY4ZDhkZWQ1YzkucG5nIiwid2lkdGgiOiI8PTEyODAifV1dLCJhdWQiOlsidXJuOnNlcnZpY2U6aW1hZ2Uub3BlcmF0aW9ucyJdfQ.21sNhahTBc5Upzpc6zQ1b6mO-9dQ5RuVjC97v75Mtv8');
+            background-size: cover;
+            z-index: 10;
+        }
+
+        .platform {
+            position: absolute;
+            width: 160px;
+            height: 90px;
+            background-size: cover;
+        }
+        .platform.green { background-image: url('https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/559d4c52-ef42-4937-8192-4d75bddbf3be/d4aiwfa-eb5ba129-b67e-4d06-be55-9273384ef099.png/v1/fill/w_900,h_600/cloud_3___vector_by_gurugrendo_d4aiwfa-fullview.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9NjAwIiwicGF0aCI6Ii9mLzU1OWQ0YzUyLWVmNDItNDkzNy04MTkyLTRkNzViZGRiZjNiZS9kNGFpd2ZhLWViNWJhMTI5LWI2N2UtNGQwNi1iZTU1LTkyNzMzODRlZjA5OS5wbmciLCJ3aWR0aCI6Ijw9OTAwIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmltYWdlLm9wZXJhdGlvbnMiXX0.F6w5_naiuzpli18z-88vWCdkp2fUM1G1GtWWNoAw_uo'); }
+        .platform.blue { background-image: url('https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/559d4c52-ef42-4937-8192-4d75bddbf3be/d4aiwfa-eb5ba129-b67e-4d06-be55-9273384ef099.png/v1/fill/w_900,h_600/cloud_3___vector_by_gurugrendo_d4aiwfa-fullview.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9NjAwIiwicGF0aCI6Ii9mLzU1OWQ0YzUyLWVmNDItNDkzNy04MTkyLTRkNzViZGRiZjNiZS9kNGFpd2ZhLWViNWJhMTI5LWI2N2UtNGQwNi1iZTU1LTkyNzMzODRlZjA5OS5wbmciLCJ3aWR0aCI6Ijw9OTAwIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmltYWdlLm9wZXJhdGlvbnMiXX0.F6w5_naiuzpli18z-88vWCdkp2fUM1G1GtWWNoAw_uo'); filter: hue-rotate(90deg); }
+        .platform.broken { background-image: url('https://i.imgur.com/YjfJWGd.png'); }
+
+        #homeScreen, #instructions, #gameOver {
+            position: fixed;
+            top:0; left:0; width:100%; height:100%;
+            display: flex; flex-direction: column;
+            justify-content:center; align-items:center;
+            z-index: 20;
+            background: rgba(255, 255, 255, 0.2); 
+        }
+
+        #homeLogo { width: 400px; margin-bottom:20px; }
+        
+        button {
+            margin:10px; padding:12px 30px; 
+            font-size:18px; cursor:pointer; 
+            font-weight:bold; background-color: #e7b2eb; 
+            color: #1d031f; border: none; border-radius: 10px;
+        }
+
+        .instructionsContent { 
+            background: rgba(255,255,255,0.8); 
+            padding:20px; 
+            border-radius: 15px; 
+            text-align:center; }
+
+        #score {
+            position: fixed; top: 20px; left: 20px;
+            font-size: 24px; font-weight: bold; color: #1d031f; z-index: 100;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="score">Score: 0m</div>
+
+    <div id="gameArea">
+        <div id="player"></div>
+    </div>
+
+    <div id="homeScreen">
+        <img id="homeLogo" src="https://scontent.fmnl25-3.fna.fbcdn.net/v/t1.15752-9/632621747_2427542101032496_6433953480976807722_n.png?_nc_cat=106&ccb=1-7&_nc_sid=9f807c&_nc_eui2=AeH76a8lsqhjoBiCrN_NNB1_8b-c2ks7bYPxv5zaSzttgwcixhP2BqPHnc3OIA0bfIGKOqaVyYwzj7u5GBhlY7HH&_nc_ohc=-GZDkrgnJ3kQ7kNvwEcQ_Im&_nc_oc=AdkMtOQ_xS1FGRg5kaxiqbLoJcGBZqZX5a8-wA-5XacleSZC1kt1rWmWxVcneNLesL0&_nc_zt=23&_nc_ht=scontent.fmnl25-3.fna&oh=03_Q7cD4gGXS7rlr75QfkRRHUJyloxt2Eqq825YStJdzJHTBX3_CA&oe=69B95225" alt="game logo">
+        <button onclick="startGame()">Play</button>
+        <button onclick="location.href='author.html'">About the Author</button><br>
+        <button onclick="showInstructions()">How to Play</button>
+    </div>
+
+    <div id="instructions" style="display:none;">
+        <div class="instructionsContent">
+            <h2>How to Play Skyhop Sparkle:</h2>
+            <br>
+            <p>There are 3 types of clouds:</p>
+            <ol>
+                <li>Normal: These clouds stay in the same spot and you can stay on them for any amount of time.</li>
+                <li>Moving: These clouds move so be careful when landing!</li>
+                <li>Stormy: These clouds disappear when landed on, so think fast!</li>
+            </ol>
+            <br>
+            <ul>
+                <li>Use left arrow to move to the left, Use right arrow to move to the right.</li>
+                <li>Click Space to jump.</li>
+                <li>Try to get a good high score!</li>
+                <li>There are ghost clouds that trick you sometimes!</li>
+            </ul>
+            <p> Don't let Twiglight Sparkle fall 😔</p>
+            <button onclick="backHome()">Back</button>
+        </div>
+    </div>
+
+    <div id="gameOver" style="display:none;">
+        <h1>Game Over!</h1>
+        <p id="finalScore">Score: 0m</p>
+        <button onclick="startGame()">Try Again</button>
+        <button onclick="goHome()">Home</button>
+    </div>
+
+    <script>
+        let player = document.getElementById("player");
+let gameArea = document.getElementById("gameArea");
+let homeScreen = document.getElementById("homeScreen");
+let instructions = document.getElementById("instructions");
+let gameOver = document.getElementById("gameOver");
+let scoreDisplay = document.getElementById("score");
+let finalScoreDisplay = document.getElementById("finalScore");
+
+let playerX, playerY, velocityY, score, totalDistance, bgPositionY;
+let gravity = 0.6;
+let jumpStrength = 23;
+let platforms = [];
+let leftPressed = false, rightPressed = false, canJump = false;
+let gameLoopInterval = null;
+
+const PLAYER_WIDTH = 100;
+const PLAYER_HEIGHT = 120;
+
+document.addEventListener("keydown", e => {
+    if (e.key === "ArrowLeft") leftPressed = true;
+    if (e.key === "ArrowRight") rightPressed = true;
+    if (e.code === "Space" && canJump) {
+        velocityY = -jumpStrength;
+        canJump = false;
+    }
+});
+
+document.addEventListener("keyup", e => {
+    if (e.key === "ArrowLeft") leftPressed = false;
+    if (e.key === "ArrowRight") rightPressed = false;
+});
+
+function startGame() {
+
+    if (gameLoopInterval) clearInterval(gameLoopInterval);
+    platforms.forEach(p => p.element.remove());
+    platforms = [];
+
+    homeScreen.style.display = "none";
+    gameOver.style.display = "none";
+    instructions.style.display = "none";
+    gameArea.style.display = "block";
+    player.style.display = "block";
+
+    score = 0;
+    totalDistance = 0;
+    bgPositionY = 0;
+    velocityY = 0;
+    document.body.style.backgroundPosition = "center 0px";
+    scoreDisplay.textContent = "Score: 0m";
+
+    playerX = window.innerWidth / 2 - PLAYER_WIDTH / 2;
+    playerY = window.innerHeight - 250;
+
+    createPlatform(window.innerWidth / 2 - 80, window.innerHeight - 100, "green");
+    let lastY = window.innerHeight - 100;
+    for (let i = 0; i < 30; i++) {
+        let x = Math.random() * (window.innerWidth - 160);
+        let y = lastY - (60 + Math.random() * 40);
+        createPlatform(x, y, randomPlatformType());
+        lastY = y;
+    }
+
+    gameLoopInterval = setInterval(gameLoop, 16);
+}
+
+function createPlatform(x, y, type) {
+    let div = document.createElement("div");
+    div.className = "platform " + type;
+    div.style.left = x + "px";
+    div.style.top = y + "px";
+    gameArea.appendChild(div);
+    platforms.push({ element: div, x: x, y: y, type: type });
+}
+
+function randomPlatformType() {
+    let r = Math.random();
+    if (r < 0.2) return "blue";
+    if (r < 0.35) return "broken";
+    return "green";
+}
+
+function gameLoop() {
+    if (leftPressed) playerX -= 7;
+    if (rightPressed) playerX += 7;
+
+    if (playerX + PLAYER_WIDTH < 0) playerX = window.innerWidth;
+    if (playerX > window.innerWidth) playerX = -PLAYER_WIDTH;
+
+    velocityY += gravity;
+    playerY += velocityY;
+    canJump = false;
+
+    platforms.forEach((p, index) => {
+        if (velocityY > 0 && 
+            playerY + PLAYER_HEIGHT >= p.y && 
+            playerY + PLAYER_HEIGHT <= p.y + 30 && 
+            playerX + PLAYER_WIDTH * 0.8 > p.x && 
+            playerX + PLAYER_WIDTH * 0.2 < p.x + 160) {
+            
+            playerY = p.y - PLAYER_HEIGHT;
+            velocityY = 0;
+            canJump = true;
+
+            if (p.type === "broken") {
+                setTimeout(() => {
+                    p.element.remove();
+                    platforms.splice(index, 1);
+                }, 150);
+            }
+        }
+    });
+
+    if (playerY < window.innerHeight / 2) {
+        let diff = window.innerHeight / 2 - playerY;
+        playerY = window.innerHeight / 2;
+        totalDistance += diff;
+        
+        bgPositionY += diff * 0.2; 
+        document.body.style.backgroundPosition = `center ${bgPositionY}px`;
+
+        platforms.forEach(p => p.y += diff);
+    }
+
+    for (let i = platforms.length - 1; i >= 0; i--) {
+        let p = platforms[i];
+        if (p.type === "blue") {
+            p.x += 2;
+            if (p.x > window.innerWidth) p.x = -160;
+        }
+        p.element.style.top = p.y + "px";
+        p.element.style.left = p.x + "px";
+
+        if (p.y > window.innerHeight) {
+            p.element.remove();
+            platforms.splice(i, 1);
+            let highestY = platforms.reduce((min, plat) => Math.min(min, plat.y), playerY);
+            createPlatform(Math.random() * (window.innerWidth - 160), highestY - 100, randomPlatformType());
+            let newGap = 80 + Math.random() * 20; 
+    createPlatform(Math.random() * (window.innerWidth - 160), highestY - newGap, randomPlatformType());
+}
+    }
+
+    score = Math.floor(totalDistance / 20);
+    scoreDisplay.textContent = "Score: " + score + "m";
+    player.style.left = playerX + "px";
+    player.style.top = playerY + "px";
+
+    if (playerY > window.innerHeight) endGame();
+}
+
+function endGame() {
+    clearInterval(gameLoopInterval);
+    finalScoreDisplay.textContent = "Score: " + score + "m";
+    gameOver.style.display = "flex";
+    gameArea.style.display = "none";
+}
+
+function goHome() {
+    clearInterval(gameLoopInterval);
+    gameOver.style.display = "none";
+    gameArea.style.display = "none";
+    homeScreen.style.display = "flex";
+}
+
+function showInstructions() { homeScreen.style.display = "none"; instructions.style.display = "flex"; }
+function backHome() { instructions.style.display = "none"; homeScreen.style.display = "flex"; }
+    </script>
+</body>
+</html>
